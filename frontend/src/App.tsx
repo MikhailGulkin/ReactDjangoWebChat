@@ -32,6 +32,14 @@ export const App: React.FC = () => {
         />
         <Route path="login" element={<Login />} />
       </Route>
+      <Route
+        path="conversations/"
+        element={
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

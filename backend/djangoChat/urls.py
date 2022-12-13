@@ -23,4 +23,5 @@ urlpatterns = [
     path("auth-token/", CustomObtainAuthTokenView.as_view()),
 
     path('api/', include('users.urls')),
+    path('api/', include('chats.urls'))
 ]

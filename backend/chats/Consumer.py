@@ -15,6 +15,8 @@ class UUIDEncoder(json.JSONEncoder):
             # if the obj is uuid, we simply return the value of uuid
             return obj.hex
         return json.JSONEncoder.default(self, obj)
+
+
 class ChatConsumer(JsonWebsocketConsumer):
     """
     This consumer is used to show user's online status,
@@ -42,14 +44,44 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.conversation_name,
             self.channel_name,
         )
-        messages = self.conversation.messages.all().order_by("-timestamp")[0:50]
+        self.send_json(
+            {
+                "type": "online_user_list",
+                "users": [user.username for user in
+                          self.conversation.online.all()],
+            }
+        )
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.conversation_name,
+            {
+                "type": "user_join",
+                "user": self.user.username,
+            },
+        )
+
+        self.conversation.online.add(self.user)
+
+        messages = self.conversation.messages.all().order_by("-timestamp")[
+                   0:5]
+        message_count = self.conversation.messages.all().count()
         self.send_json({
             "type": "last_50_messages",
             "messages": MessageSerializer(messages, many=True).data,
+            'has_more': message_count > 5
         })
 
     def disconnect(self, code):
         print("Disconnected!")
+        if self.user.is_authenticated:  # send the leave event to the room
+            async_to_sync(self.channel_layer.group_send)(
+                self.conversation_name,
+                {
+                    "type": "user_leave",
+                    "user": self.user.username,
+                },
+            )
+            self.conversation.online.remove(self.user)
         return super().disconnect(code)
 
     def receive_json(self, content, **kwargs):
@@ -74,6 +106,7 @@ class ChatConsumer(JsonWebsocketConsumer):
     def chat_message_echo(self, event):
         print(event)
         self.send_json(event)
+
     def get_receiver(self):
         usernames = self.conversation_name.split("__")
         for username in usernames:
@@ -84,3 +117,9 @@ class ChatConsumer(JsonWebsocketConsumer):
     @classmethod
     def encode_json(cls, content):
         return json.dumps(content, cls=UUIDEncoder)
+
+    def user_join(self, event):
+        self.send_json(event)
+
+    def user_leave(self, event):
+        self.send_json(event)

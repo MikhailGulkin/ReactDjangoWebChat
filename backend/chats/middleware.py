@@ -44,6 +44,7 @@ class TokenAuthentication:
 
         return token.user
 
+
 @database_sync_to_async
 def get_user(scope):
     """
