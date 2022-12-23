@@ -4,6 +4,7 @@ import { Chat } from "@/pages/Chat";
 import { Login } from "@/pages/Login";
 import { Navbar } from "@/components/common/Navbar";
 import { AuthContextProvider } from "./contexts/AuthContext";
+import { NotificationContextProvider } from "./contexts/NotificationContext";
 
 import "./baseStyle/tailwind.scss";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -16,7 +17,9 @@ export const App: React.FC = () => {
         path="/"
         element={
           <AuthContextProvider>
-            <Navbar />
+            <NotificationContextProvider>
+              <Navbar />
+            </NotificationContextProvider>
           </AuthContextProvider>
         }
       >

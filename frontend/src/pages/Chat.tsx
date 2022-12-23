@@ -1,30 +1,37 @@
-import React, { ChangeEvent, useContext, useState } from "react";
+//@ts-nocheck
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useHotkeys } from "react-hotkeys-hook";
 import { AuthContext } from "@/contexts/AuthContext";
-import { useParams } from "react-router";
-import { ChatLoader } from "@/components/Chat/ChatLoader";
-import { Message } from "@/components/Chat/Message";
 import { MessageModel } from "@/models/Message";
+import { Message } from "@/components/Chat/Message";
+import { ChatLoader } from "@/components/Chat/ChatLoader";
 import { ConversationModel } from "@/models/Conversation";
 
-export const Chat = () => {
-  const [welcomeMessage, setWelcomeMessage] = useState("");
-  const [messageHistory, setMessageHistory] = useState<any>([]);
-  const [page, setPage] = useState(2);
+export function Chat() {
+  const { conversationName } = useParams();
+  const { user } = useContext(AuthContext);
   const [participants, setParticipants] = useState<string[]>([]);
   const [conversation, setConversation] = useState<ConversationModel | null>(
     null
   );
-
-  const [hasMoreMessages, setHasMoreMessages] = useState(false);
-
-  const { user } = useContext(AuthContext);
-  const { conversationName } = useParams();
+  const [messageHistory, setMessageHistory] = useState<MessageModel[]>([]);
   const [message, setMessage] = useState("");
+  const [page, setPage] = useState(2);
+  const [hasMoreMessages, setHasMoreMessages] = useState(false);
+  const [meTyping, setMeTyping] = useState(false);
+  const [typing, setTyping] = useState(false);
+
+  function updateTyping(event: { user: string; typing: boolean }) {
+    if (event.user !== user!.username) {
+      setTyping(event.typing);
+    }
+  }
 
   const { readyState, sendJsonMessage } = useWebSocket(
-    user ? `ws://127.0.0.1:8000/${conversationName}/` : null,
+    user ? `ws://127.0.0.1:8000/chats/${conversationName}/` : null,
     {
       queryParams: {
         token: user ? user.token : "",
@@ -35,17 +42,15 @@ export const Chat = () => {
       onClose: () => {
         console.log("Disconnected!");
       },
+      // onMessage handler
       onMessage: (e) => {
         const data = JSON.parse(e.data);
         switch (data.type) {
-          case "welcome_message":
-            setWelcomeMessage(data.message);
-            break;
-          case "greeting_response":
-            setWelcomeMessage(data.message);
-            break;
           case "chat_message_echo":
             setMessageHistory((prev: any) => [data.message, ...prev]);
+            sendJsonMessage({
+              type: "read_messages",
+            });
             break;
           case "last_50_messages":
             setMessageHistory(data.messages);
@@ -68,6 +73,9 @@ export const Chat = () => {
           case "online_user_list":
             setParticipants(data.users);
             break;
+          case "typing":
+            updateTyping(data);
+            break;
           default:
             console.error("Unknown message type!");
             break;
@@ -75,6 +83,23 @@ export const Chat = () => {
       },
     }
   );
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+  }[readyState];
+
+  useEffect(() => {
+    if (connectionStatus === "Open") {
+      sendJsonMessage({
+        type: "read_messages",
+      });
+    }
+  }, [connectionStatus, sendJsonMessage]);
+
   async function fetchMessages() {
     const apiRes = await fetch(
       `http://127.0.0.1:8000/api/messages/?conversation=${conversationName}&page=${page}`,
@@ -99,26 +124,61 @@ export const Chat = () => {
       setMessageHistory((prev: MessageModel[]) => prev.concat(data.results));
     }
   }
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: "Connecting",
-    [ReadyState.OPEN]: "Open",
-    [ReadyState.CLOSING]: "Closing",
-    [ReadyState.CLOSED]: "Closed",
-    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
-  }[readyState];
 
-  const onInputChangeMsg = (event: ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value);
-  };
+  const timeout = useRef<any>();
 
-  const onButtonClick = () => {
+  function timeoutFunction() {
+    setMeTyping(false);
+    sendJsonMessage({ type: "typing", typing: false });
+  }
+
+  function onType() {
+    if (meTyping === false) {
+      setMeTyping(true);
+      sendJsonMessage({ type: "typing", typing: true });
+      timeout.current = setTimeout(timeoutFunction, 5000);
+    } else {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(timeoutFunction, 5000);
+    }
+  }
+
+  function handleChangeMessage(e: any) {
+    setMessage(e.target.value);
+    onType();
+  }
+
+  useEffect(() => () => clearTimeout(timeout.current), []);
+
+  // @ts-ignore
+  const handleSubmit = () => {
+    if (message.length === 0) return;
+    if (message.length > 512) return;
     sendJsonMessage({
       type: "chat_message",
       message,
     });
     setMessage("");
+    clearTimeout(timeout.current);
+    timeoutFunction();
   };
-  React.useEffect(() => {
+
+  const inputReference: any = useHotkeys(
+    "enter",
+    () => {
+      handleSubmit();
+    },
+
+    {
+      enableOnTags: ["INPUT"],
+    }
+  );
+
+  useEffect(() => {
+    (inputReference.current as HTMLElement).focus();
+  }, [inputReference]);
+
+  useEffect(() => {
     async function fetchConversation() {
       const apiRes = await fetch(
         `http://127.0.0.1:8000/api/conversations/${conversationName}/`,
@@ -136,60 +196,70 @@ export const Chat = () => {
         setConversation(data);
       }
     }
+
     fetchConversation();
   }, [conversationName, user]);
+
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="flex flex-col w-1/6">
+    <div>
+      <span>The WebSocket is currently {connectionStatus}</span>
+      {conversation && (
+        <div className="py-6">
+          <h3 className="text-3xl font-semibold text-gray-900">
+            Chat with user: {conversation.other_user.username}
+          </h3>
+          <span className="text-sm">
+            {conversation.other_user.username} is currently
+            {participants.includes(conversation.other_user.username)
+              ? " online"
+              : " offline"}
+          </span>
+          {typing && (
+            <p className="truncate text-sm text-gray-500">typing...</p>
+          )}
+        </div>
+      )}
+
+      <div className="flex w-full items-center justify-between border border-gray-200 p-3">
         <input
-          name="message"
+          type="text"
           placeholder="Message"
-          onChange={onInputChangeMsg}
+          className="block w-full rounded-full bg-gray-100 py-2 outline-none focus:text-gray-700"
+          name="message"
           value={message}
-          className="shadow-sm sm:text-sm border-gray-300 bg-gray-100 rounded-md mb-2"
+          onChange={handleChangeMessage}
+          required
+          ref={inputReference}
+          maxLength={511}
         />
-        <button className="bg-gray-300 px-3 py-1" onClick={onButtonClick}>
+        <button className="ml-3 bg-gray-300 px-3 py-1" onClick={handleSubmit}>
           Submit
         </button>
       </div>
-      <div>
-        <ul>
+
+      <div
+        id="scrollableDiv"
+        className={
+          "h-[20rem] mt-3 flex flex-col-reverse relative w-full border border-gray-200 overflow-y-auto p-6"
+        }
+      >
+        <div>
+          {/* Put the scroll bar always on the bottom */}
           <InfiniteScroll
             dataLength={messageHistory.length}
             next={fetchMessages}
-            className="flex flex-col-reverse"
+            className="flex flex-col-reverse" // To put endMessage and loader to the top
             inverse={true}
             hasMore={hasMoreMessages}
             loader={<ChatLoader />}
             scrollableTarget="scrollableDiv"
           >
-            {messageHistory.map((message: any, idx: number) => (
-              <div className="border border-gray-200 py-3 px-3" key={idx}>
-                <Message key={message.id} message={message} />
-              </div>
+            {messageHistory.map((message: MessageModel, index) => (
+              <Message key={index} message={message} />
             ))}
           </InfiniteScroll>
-        </ul>
-      </div>
-      <div>
-        {conversation && (
-          <div className="py-6">
-            <h3 className="text-3xl font-semibold text-gray-900">
-              Chat with user: {conversation?.other_user.username}
-            </h3>
-            <span className="text-sm">
-              {conversation?.other_user.username} is currently
-              {participants.includes(conversation.other_user.username)
-                ? " online"
-                : " offline"}
-            </span>
-          </div>
-        )}
-      </div>
-      <div>
-        <span>The WebSocket is currently {connectionStatus}</span>
-        <p>{welcomeMessage}</p>
+        </div>
       </div>
     </div>
   );
-};
+}

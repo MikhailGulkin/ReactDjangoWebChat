@@ -2,14 +2,23 @@ import React from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useContext } from "react";
 import { Outlet, Link } from "react-router-dom";
+import { NotificationContext } from "@/contexts/NotificationContext";
 
 export const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const { unreadMessageCount } = useContext(NotificationContext);
 
   return (
     <>
       <nav className="bg-white border-gray-200 px-4 sm:px-6 py-2.5 rounded dark:bg-gray-800">
         <div className="max-w-5xl mx-auto flex flex-wrap justify-between items-center">
+          {unreadMessageCount > 0 && (
+            <span className="ml-2 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white">
+              <span className="text-xs font-medium leading-none text-gray-800">
+                {unreadMessageCount}
+              </span>
+            </span>
+          )}
           <Link to="/" className="flex items-center">
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               Django Chat
