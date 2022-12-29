@@ -1,0 +1,16 @@
+services:
+  postgres:
+    container_name: postgresChat
+    image: postgres:alpine
+    ports:
+      - "1234:5432"
+    restart: on-failure
+    env_file:
+      - ./djangoChat/.env
+  redis:
+    ports:
+      - "4444:6379"
+    container_name: redisChat
+    image: redis:alpine
+    restart: on-failure
+    command: redis-server

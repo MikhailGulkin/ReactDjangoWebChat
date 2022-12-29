@@ -1,42 +1,29 @@
 import React, { createContext, ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios, { AxiosInstance } from "axios";
-
-import authHeader from "../services/AuthHeader";
 import AuthService from "../services/AuthService";
-import { UserModel } from "@/models/User";
+import axios from "axios";
+import { AuthPropsType, DefaultPropsType } from "@/@types/auth";
+import { useNavigate } from "react-router-dom";
+import { authHeader } from "@/services/AuthHeader";
+import { paths } from "@/routing/config";
 
-const DefaultProps = {
-  login: () => null,
-  logout: () => null,
-  authAxios: axios,
-  user: null
-};
+export const AuthContext = createContext<AuthPropsType>(DefaultPropsType);
 
-export interface AuthProps {
-  login: (username: string, password: string) => any;
-  logout: () => void;
-  authAxios: AxiosInstance;
-  user: UserModel | null;
-}
-
-export const AuthContext = createContext<AuthProps>(DefaultProps);
-
-export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(() => AuthService.getCurrentUser());
-
   async function login(username: string, password: string) {
     const data = await AuthService.login(username, password);
     setUser(data);
     return data;
   }
 
-  function logout() {
+  const logout = () => {
     AuthService.logout();
     setUser(null);
-    navigate("/login");
-  }
+    navigate(paths.login);
+  };
 
   // axios instance for making requests
   const authAxios = axios.create();

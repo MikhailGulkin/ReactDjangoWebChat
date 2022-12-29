@@ -1,0 +1,15 @@
+.root
+{
+  svg
+  {
+    opacity: .9 !important;
+
+    &:hover
+    {
+      transition: .2s ease-out;
+      opacity: 1;
+
+      fill: rgba(99, 102, 241, .9) !important;
+    }
+  }
+}

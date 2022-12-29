@@ -1,28 +1,35 @@
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.viewsets import GenericViewSet
-from .paginaters import MessagePagination
+from rest_framework import generics
 
 from .models import Conversation, Message
-
+from .paginaters import MessagePagination
 from .serializers import ConversationSerializer, MessageSerializer
+from .mixins.api.conversation import ConversationContextMixin
 
 
-class ConversationViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+#
+class ConversationListAPIView(
+    ConversationContextMixin,
+    generics.ListAPIView
+):
     serializer_class = ConversationSerializer
     queryset = Conversation.objects.none()
-    lookup_field = "name"
 
     def get_queryset(self):
-        queryset = Conversation.objects.filter(
+        return Conversation.objects.filter(
             name__contains=self.request.user.username
         )
-        return queryset
-
-    def get_serializer_context(self):
-        return {"request": self.request, "user": self.request.user}
 
 
-class MessageViewSet(ListModelMixin, GenericViewSet):
+class ConversationRetrieveAPIView(
+    ConversationContextMixin,
+    generics.RetrieveAPIView
+):
+    serializer_class = ConversationSerializer
+    queryset = Conversation.objects.all()
+    lookup_field = 'name'
+
+
+class MessageListAPIView(generics.ListAPIView):
     serializer_class = MessageSerializer
     queryset = Message.objects.none()
     pagination_class = MessagePagination

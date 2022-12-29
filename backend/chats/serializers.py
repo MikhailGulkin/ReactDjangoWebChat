@@ -4,6 +4,7 @@ from .models import Message
 from users.serializers import UserSerializer
 from .models import Conversation
 
+User = get_user_model()
 class MessageSerializer(serializers.ModelSerializer):
     from_user = serializers.SerializerMethodField()
     to_user = serializers.SerializerMethodField()
@@ -31,7 +32,6 @@ class MessageSerializer(serializers.ModelSerializer):
         return UserSerializer(obj.to_user).data
 
 
-User = get_user_model()
 
 
 class ConversationSerializer(serializers.ModelSerializer):

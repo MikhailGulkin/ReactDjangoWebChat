@@ -10,10 +10,8 @@ User = get_user_model()
 class TokenAuthentication:
     """
     Simple token based authentication.
-
     Clients should authenticate by passing the token key in the query parameters.
     For example:
-
         ?token=401f7ac837da42b97f613d789819ff93537bee6a
     """
 
@@ -27,7 +25,6 @@ class TokenAuthentication:
 
     """
     A custom token model may be used, but must have the following properties.
-
     * key -- The string identifying the token
     * user -- The user to which the token belongs
     """
@@ -43,7 +40,6 @@ class TokenAuthentication:
             raise AuthenticationFailed(_("User inactive or deleted."))
 
         return token.user
-
 
 @database_sync_to_async
 def get_user(scope):
@@ -85,7 +81,6 @@ class TokenAuthMiddleware:
         # populated).
         query_params = parse_qs(scope["query_string"].decode())
         token = query_params["token"][0]
-
         scope["token"] = token
         scope["user"] = await get_user(scope)
         return await self.app(scope, receive, send)

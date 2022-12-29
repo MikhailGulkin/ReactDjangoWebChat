@@ -1,24 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "@/contexts/AuthContext";
-import { ConversationModel } from "@/models/Conversation";
+import { ConversationType } from "@/@types/converstation";
+import { paths } from "@/routing/config";
 
 export function ActiveConversations() {
   const { user } = useContext(AuthContext);
-  const [conversations, setActiveConversations] = useState<ConversationModel[]>(
+  const [conversations, setActiveConversations] = useState<ConversationType[]>(
     []
   );
 
   useEffect(() => {
     async function fetchUsers() {
-      const res = await fetch("http://127.0.0.1:8000/api/conversations/", {
+      const res = await fetch(`http://${process.env.REACT_APP_API_SOCKET}/api/conversations/`, {
         headers: {
-          Authorization: `Token ${user?.token}`,
+          Authorization: `Bearer ${user?.token}`,
         },
       });
       const data = await res.json();
       setActiveConversations(data);
     }
+
     fetchUsers();
   }, [user]);
 
@@ -34,13 +36,13 @@ export function ActiveConversations() {
   }
 
   return (
-    <div>
+    <div className="base-container">
       {conversations.map((c) => (
         <Link
-          to={`/chats/${createConversationName(c.other_user.username)}`}
+          to={`${paths.chat(createConversationName(c.other_user.username))}`}
           key={c.other_user.username}
         >
-          <div className="border border-gray-200 w-full p-3">
+          <div className="border border-gray-200 w-full p-3 mb-2">
             <h3 className="text-xl font-semibold text-gray-800">
               {c.other_user.username}
             </h3>

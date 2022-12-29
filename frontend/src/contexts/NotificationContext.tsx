@@ -22,7 +22,7 @@ export const NotificationContextProvider: React.FC<{ children: ReactNode }> = ({
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   const { readyState } = useWebSocket(
-    user ? `ws://127.0.0.1:8000/notifications/` : null,
+    user ? `ws://${process.env.REACT_APP_API_SOCKET}/notifications/` : null,
     {
       queryParams: {
         token: user ? user.token : "",
@@ -40,7 +40,7 @@ export const NotificationContextProvider: React.FC<{ children: ReactNode }> = ({
             setUnreadMessageCount(data.unread_count);
             break;
           case "new_message_notification":
-            setUnreadMessageCount((count) => (count += 1));
+            setUnreadMessageCount(unreadMessageCount + 1);
             break;
           default:
             console.error("Unknown message type!");

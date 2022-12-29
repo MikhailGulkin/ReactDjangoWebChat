@@ -1,4 +1,4 @@
-export function ChatLoader() {
+export const ChatLoader = () => {
   return (
     <div className="text-center">
       <svg
@@ -19,4 +19,4 @@ export function ChatLoader() {
       </svg>
     </div>
   );
-}
+};

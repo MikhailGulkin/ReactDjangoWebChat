@@ -31,7 +31,7 @@ class Message(models.Model):
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name="messages"
     )
-    from_user = models.ForeignKey(
+    from_user: User = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="messages_from_me"
     )
     to_user = models.ForeignKey(
