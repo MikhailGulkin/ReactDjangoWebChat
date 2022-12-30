@@ -6,7 +6,7 @@ from .serializers import ConversationSerializer, MessageSerializer
 from .mixins.api.conversation import ConversationContextMixin
 
 
-#
+
 class ConversationListAPIView(
     ConversationContextMixin,
     generics.ListAPIView
@@ -15,6 +15,7 @@ class ConversationListAPIView(
     queryset = Conversation.objects.none()
 
     def get_queryset(self):
+
         return Conversation.objects.filter(
             name__contains=self.request.user.username
         )

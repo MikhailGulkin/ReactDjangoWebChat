@@ -47,13 +47,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_redis',
-    # 'djoser',
-    # 'corsheaders',
-    # 'rest_framework_simplejwt',
-    # 'rest_framework_simplejwt.token_blacklist',
-    #
-    # 'drf_spectacular',
-    # 'django_better_admin_arrayfield',
+    'drf_spectacular',
 
 ]
 PROJECT_APPS = [
@@ -165,14 +159,15 @@ REST_FRAMEWORK = {
         "users.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-# SIMPLE_JWT = {
-#     'AUTH_HEADER_TYPES': ('Bearer',),
-#     'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-#     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-# }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Web chat api',
+    'DESCRIPTION': 'Simple web chat api',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

@@ -1,14 +1,11 @@
 import { useContext } from "react";
+
 import { AuthContext } from "@/contexts/AuthContext";
 import { MessageType } from "@/@types/message";
+import { formatMessageTimestamp } from "@/utils/formatMessage";
 
 export function Message({ message }: { message: MessageType }) {
   const { user } = useContext(AuthContext);
-
-  function formatMessageTimestamp(timestamp: string) {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString().slice(0, 5);
-  }
 
   return (
     <li

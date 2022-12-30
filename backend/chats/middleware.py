@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
+
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
-from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import AuthenticationFailed
 
 User = get_user_model()
@@ -40,6 +41,7 @@ class TokenAuthentication:
             raise AuthenticationFailed(_("User inactive or deleted."))
 
         return token.user
+
 
 @database_sync_to_async
 def get_user(scope):

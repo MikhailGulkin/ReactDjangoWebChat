@@ -1,16 +1,8 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { AuthContext } from "./AuthContext";
-
-const DefaultProps = {
-  unreadMessageCount: 0,
-  connectionStatus: "Uninstantiated",
-};
-
-export interface NotificationProps {
-  unreadMessageCount: number;
-  connectionStatus: string;
-}
+import { DefaultProps } from "@/@types/notification";
+import { NotificationProps } from "@/@types/notification";
 
 export const NotificationContext =
   createContext<NotificationProps>(DefaultProps);
@@ -20,7 +12,7 @@ export const NotificationContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { user } = useContext(AuthContext);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
-
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const { readyState } = useWebSocket(
     user ? `ws://${process.env.REACT_APP_API_SOCKET}/notifications/` : null,
     {
@@ -40,7 +32,13 @@ export const NotificationContextProvider: React.FC<{ children: ReactNode }> = ({
             setUnreadMessageCount(data.unread_count);
             break;
           case "new_message_notification":
-            setUnreadMessageCount(unreadMessageCount + 1);
+            setUnreadMessageCount(data.unread_count);
+            break;
+          case "online_user_status":
+            setOnlineUsers([data.name as never, ...onlineUsers]);
+            break;
+          case "offline_user_status":
+            setOnlineUsers(onlineUsers.filter((ele) => ele !== data.name));
             break;
           default:
             console.error("Unknown message type!");
@@ -60,7 +58,7 @@ export const NotificationContextProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <NotificationContext.Provider
-      value={{ unreadMessageCount, connectionStatus }}
+      value={{ unreadMessageCount, connectionStatus, onlineUsers }}
     >
       {children}
     </NotificationContext.Provider>

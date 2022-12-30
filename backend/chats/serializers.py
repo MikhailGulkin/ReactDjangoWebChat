@@ -1,10 +1,14 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Message
+from rest_framework import serializers
 from users.serializers import UserSerializer
+
 from .models import Conversation
+from .models import Message
+from .utils.getOtherUser import get_other_user
 
 User = get_user_model()
+
+
 class MessageSerializer(serializers.ModelSerializer):
     from_user = serializers.SerializerMethodField()
     to_user = serializers.SerializerMethodField()
@@ -32,15 +36,23 @@ class MessageSerializer(serializers.ModelSerializer):
         return UserSerializer(obj.to_user).data
 
 
-
-
 class ConversationSerializer(serializers.ModelSerializer):
     other_user = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
+    have_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ("id", "name", "other_user", "last_message")
+        fields = ("id", "name", 'have_message', "other_user", "last_message")
+
+    def get_have_message(self, obj):
+        usernames = obj.name.split("__")
+        other_user = get_other_user(usernames, self.context['user'].username)
+        return Message.objects.filter(
+            to_user=User.objects.get(username=self.context["user"].username),
+            from_user=other_user,
+            read=False
+        ).exists()
 
     def get_last_message(self, obj):
         messages = obj.messages.all().order_by("-timestamp")
@@ -51,9 +63,5 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_other_user(self, obj):
         usernames = obj.name.split("__")
-        context = {}
-        for username in usernames:
-            if username != self.context["user"].username:
-                # This is the other participant
-                other_user = User.objects.get(username=username)
-                return UserSerializer(other_user, context=context).data
+        other_user = get_other_user(usernames, self.context['user'].username)
+        return UserSerializer(other_user).data

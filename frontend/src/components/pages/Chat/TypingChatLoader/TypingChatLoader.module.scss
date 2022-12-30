@@ -1,0 +1,26 @@
+.bounce {
+  animation: bounce .5s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+.firstCircle
+{
+  animation-delay: 0.1s !important;
+}
+
+.secondCircle
+{
+  animation-delay: 0.2s !important;
+}
+
+.thirdCircle
+{
+  animation-delay: 0.3s !important;
+}

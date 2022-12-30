@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { paths } from "@/routing/config";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -30,14 +30,14 @@ export const Header = () => {
                 >
                   Active Conversations
                 </Link>
-                {unreadMessageCount > 0 && (
-                  <span className="ml-2 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white">
-                    <span className="text-xs font-medium leading-none text-gray-800">
-                      {unreadMessageCount}
-                    </span>
-                  </span>
-                )}
               </li>
+              {unreadMessageCount > 0 && (
+                <li>
+                  <span className="py-2 pr-4 pl-3 text-black p-0">
+                    New message: {unreadMessageCount}
+                  </span>
+                </li>
+              )}
               {user ? (
                 <>
                   <li>

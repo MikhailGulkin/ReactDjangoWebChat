@@ -1,11 +1,9 @@
-from django.urls import path, include
-# from .views import ConversationViewSet, MessageViewSet
-from .views import ConversationListAPIView, MessageListAPIView, ConversationRetrieveAPIView
-from rest_framework import routers
-
-# router = routers.DefaultRouter()
-# router.register(r'conversations', ConversationViewSet)
-# router.register(r"messages", MessageViewSet)
+from django.urls import path
+from .views import (
+    ConversationListAPIView,
+    MessageListAPIView,
+    ConversationRetrieveAPIView
+)
 
 urlpatterns = [
     path('conversations/<slug:name>/', ConversationRetrieveAPIView.as_view()),

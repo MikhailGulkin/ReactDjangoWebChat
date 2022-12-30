@@ -10,7 +10,7 @@ export const _fetchConversation =
   ) =>
   async () => {
     const apiRes = await fetch(
-      `http://127.0.0.1:8000/api/conversations/${conversationName}/`,
+      `http://${process.env.REACT_APP_API_SOCKET}/api/conversations/${conversationName}/`,
       {
         method: "GET",
         headers: {
@@ -20,6 +20,9 @@ export const _fetchConversation =
         },
       }
     );
+    if (apiRes.status === 404) {
+      _fetchConversation(conversationName, user, setConversation)();
+    }
     if (apiRes.status === 200) {
       const data: ConversationType = await apiRes.json();
       setConversation(data);
