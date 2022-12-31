@@ -1,6 +1,6 @@
 services:
   web:
-    container_name: webChat
+    container_name: webBackendChat
     restart: always
     build:
       context: .
