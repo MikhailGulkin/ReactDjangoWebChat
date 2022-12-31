@@ -1,4 +1,7 @@
 class NotificationConsumerJsonSendMixin:
+    """
+    Class for send json in chats.NotificationConsumer.
+    """
     def offline_user_status(self, event):
         self.send_json(event)
 
@@ -13,6 +16,9 @@ class NotificationConsumerJsonSendMixin:
 
 
 class ConsumerJsonSendMixin:
+    """
+    Class for send json in chats.ChatConsumer
+    """
     def chat_message_echo(self, event):
         self.send_json(event)
 
@@ -30,4 +36,8 @@ class ConsumerAllJsonSendMixin(
     NotificationConsumerJsonSendMixin,
     ConsumerJsonSendMixin
 ):
+    """
+    class inherited from NotificationConsumerJsonSendMixin
+    and ConsumerJsonSendMixin.
+    """
     pass

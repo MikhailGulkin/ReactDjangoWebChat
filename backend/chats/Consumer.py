@@ -18,8 +18,11 @@ class ChatConsumer(
     ConsumerAllJsonSendMixin
 ):
     """
-    This consumer is used to show user's online status,
-    and send notifications.
+    This consumer is used to show user's
+    online status,
+    send notifications,
+    return last 50 message,
+    send another user online status.
     """
 
     def __init__(self, *args, **kwargs):
@@ -58,6 +61,10 @@ class NotificationConsumer(
     UserNotificationDisconnectMixin,
     NotificationConsumerJsonSendMixin
 ):
+    """
+    This consumer is used to show user's
+    new message notification.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
         self.user = None

@@ -1,9 +1,9 @@
 import { Chat } from "@/pages/Chat";
 import { Login } from "@/pages/Auth/Login";
-import { paths } from "@/routing/config";
-import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { Home } from "@/pages/Home";
+import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ActiveConversations } from "@/pages/ActiveConverstation";
+import { paths } from "@/routing/config";
 
 export const RoutesList = [
   {

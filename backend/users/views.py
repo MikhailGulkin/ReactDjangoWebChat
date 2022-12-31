@@ -18,6 +18,9 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 class UserListAPIView(generics.ListAPIView):
+    """
+   Display a list :model:`users.User`.
+   """
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -30,6 +33,9 @@ class UserListAPIView(generics.ListAPIView):
 
 
 class CustomObtainAuthTokenView(ObtainAuthToken):
+    """
+    Creating or return exist token with username.
+    """
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

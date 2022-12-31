@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+
+import { MessageType } from "@/@types/message";
+import { ChatBodyType } from "@/@types/chat";
+
 import { ChatLoader } from "@/components/pages/Chat/ChatLoader";
 import { TypingChatLoader } from "@/components/pages/Chat/TypingChatLoader";
-import { MessageType } from "@/@types/message";
 import { Message } from "@/components/pages/Chat/Message";
-import { _fetchMessages } from "@/services/Chat/getNewMessage";
+
 import { AuthContext } from "@/contexts/AuthContext";
-import { ChatBodyType } from "@/@types/chat";
+import { _fetchMessages } from "@/services/Chat/getNewMessage";
 
 export const ChatBody: React.FC<ChatBodyType> = ({
   conversationName,

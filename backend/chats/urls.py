@@ -6,7 +6,16 @@ from .views import (
 )
 
 urlpatterns = [
-    path('conversations/<slug:name>/', ConversationRetrieveAPIView.as_view()),
-    path('conversations/', ConversationListAPIView.as_view()),
-    path('messages/', MessageListAPIView.as_view()),
+    path('conversations/<slug:name>/',
+         ConversationRetrieveAPIView.as_view(),
+         name="conversation-by-name"
+         ),
+    path('conversations/',
+         ConversationListAPIView.as_view(),
+         name="all-conversations-for-user"
+         ),
+    path('messages/',
+         MessageListAPIView.as_view(),
+         name="all-messages"
+         ),
 ]

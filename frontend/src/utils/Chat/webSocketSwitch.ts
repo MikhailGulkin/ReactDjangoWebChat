@@ -1,6 +1,6 @@
-import { onMessageHandlerType } from "@/@types/socket";
 import React from "react";
-import {SendJsonMessage} from "react-use-websocket/src/lib/types";
+import { onMessageHandlerType } from "@/@types/socket";
+import { SendJsonMessage } from "react-use-websocket/src/lib/types";
 
 export const webSocketSwitch = (
   data: any,
@@ -13,7 +13,7 @@ export const webSocketSwitch = (
   switch (data.type) {
     case onMessageHandlerType.chat_message_echo:
       setMessageHistory((prev: any) => [data.message, ...prev]);
-      sendJsonMessage({type: 'read_messages'})
+      sendJsonMessage({ type: "read_messages" });
       break;
     case onMessageHandlerType.last_50_messages:
       setMessageHistory(data.messages);

@@ -1,5 +1,5 @@
-import { SendJsonMessage } from "react-use-websocket/src/lib/types";
 import React from "react";
+import { SendJsonMessage } from "react-use-websocket/src/lib/types";
 import { UserType } from "@/@types/user";
 
 export const _updateTyping =

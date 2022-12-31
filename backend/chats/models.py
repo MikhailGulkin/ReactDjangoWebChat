@@ -7,6 +7,9 @@ User = get_user_model()
 
 
 class Conversation(models.Model):
+    """
+    Store a base conversation information.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=128)
     online = models.ManyToManyField(to=User, blank=True)
@@ -21,12 +24,14 @@ class Conversation(models.Model):
     def leave(self, user):
         self.online.remove(user)
         self.save()
-
     def __str__(self):
         return f"{self.name} ({self.get_online_count()})"
 
 
 class Message(models.Model):
+    """
+    Store a base message information.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name="messages"
@@ -42,4 +47,5 @@ class Message(models.Model):
     read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"From {self.from_user.username} to {self.to_user.username}: {self.content} [{self.timestamp}]"
+        return f"From {self.from_user.username} to {self.to_user.username}: " \
+               f"{self.content} [{self.timestamp}]"

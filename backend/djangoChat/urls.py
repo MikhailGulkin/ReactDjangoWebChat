@@ -8,7 +8,10 @@ from users.views import CustomObtainAuthTokenView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path("auth-token/", CustomObtainAuthTokenView.as_view()),
+    path("auth-token/",
+         CustomObtainAuthTokenView.as_view(),
+         name='token-auth'
+         ),
 
     path('api/', include('users.urls')),
     path('api/', include('chats.urls'))

@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
-import { AuthContext } from "@/contexts/AuthContext";
 import { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
 import { UserResponseType } from "@/@types/user";
-import {paths} from "@/routing/config";
+import { AuthContext } from "@/contexts/AuthContext";
+import { paths } from "@/routing/config";
 
 export const Home = () => {
   const { user } = useContext(AuthContext);
@@ -36,8 +37,13 @@ export const Home = () => {
         {users
           .filter((u: UserResponseType) => u.username !== user?.username)
           .map((u: UserResponseType, index) => (
-            <Link key={`${u.username} - ${index}`} to={`${paths.chat(createConversationName(u.username))}`}>
-              <div className="border border-gray-200 w-full p-3 mb-2">{u.username}</div>
+            <Link
+              key={`${u.username} - ${index}`}
+              to={`${paths.chat(createConversationName(u.username))}`}
+            >
+              <div className="border border-gray-200 w-full p-3 mb-2">
+                {u.username}
+              </div>
             </Link>
           ))}
       </div>

@@ -4,7 +4,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { MessageType } from "@/@types/message";
 import { formatMessageTimestamp } from "@/utils/formatMessage";
 
-export function Message({ message }: { message: MessageType }) {
+export const Message = ({ message }: { message: MessageType }) => {
   const { user } = useContext(AuthContext);
 
   return (
@@ -35,4 +35,4 @@ export function Message({ message }: { message: MessageType }) {
       </div>
     </li>
   );
-}
+};

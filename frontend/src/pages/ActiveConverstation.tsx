@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { AuthContext } from "@/contexts/AuthContext";
 import { ConversationType } from "@/@types/converstation";
-import { paths } from "@/routing/config";
 import { NotificationContext } from "@/contexts/NotificationContext";
+import { paths } from "@/routing/config";
+
 import { formatMessageTimestamp } from "@/utils/formatMessage";
 import { createConversationName } from "@/utils/createConversationName";
 

@@ -1,9 +1,11 @@
 import React, { createContext, ReactNode, useState } from "react";
-import AuthService from "../services/AuthService";
 import axios from "axios";
-import { AuthPropsType, DefaultPropsType } from "@/@types/auth";
 import { useNavigate } from "react-router-dom";
+
+import AuthService from "../services/AuthService";
 import { authHeader } from "@/services/AuthHeader";
+
+import { AuthPropsType, DefaultPropsType } from "@/@types/auth";
 import { paths } from "@/routing/config";
 
 export const AuthContext = createContext<AuthPropsType>(DefaultPropsType);

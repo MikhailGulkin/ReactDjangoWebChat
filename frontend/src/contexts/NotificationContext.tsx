@@ -1,8 +1,11 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { AuthContext } from "./AuthContext";
+
 import { DefaultProps } from "@/@types/notification";
 import { NotificationProps } from "@/@types/notification";
+
+import { AuthContext } from "./AuthContext";
+
 
 export const NotificationContext =
   createContext<NotificationProps>(DefaultProps);

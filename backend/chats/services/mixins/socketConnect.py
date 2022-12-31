@@ -6,6 +6,10 @@ from chats.utils.countUniqueMessage import count_unique_conversation_message
 
 
 class UserConsumerConnectLoginMixin:
+    """
+    Class that implements the logic when user connect to chats.ChatConsumer.
+    """
+
     def _user_connect(self):
         self.user = self.scope["user"]
         if not self.user.is_authenticated:
@@ -68,6 +72,11 @@ class UserConsumerConnectLoginMixin:
 
 
 class UserNotificationConnectMixin:
+    """
+    Class that implements the logic when user connect to
+    chats.NotificationConsumer.
+    """
+
     def _user_notification_connect(self):
         self.user = self.scope["user"]
         if not self.user.is_authenticated:

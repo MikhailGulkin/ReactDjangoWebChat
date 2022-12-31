@@ -1,6 +1,6 @@
+import React from "react";
 import { MessageType } from "@/@types/message";
 import { UserType } from "@/@types/user";
-import React from "react";
 
 export const _fetchMessages =
   (

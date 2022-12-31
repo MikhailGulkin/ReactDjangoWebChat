@@ -45,7 +45,12 @@ class ConversationSerializer(serializers.ModelSerializer):
         model = Conversation
         fields = ("id", "name", 'have_message', "other_user", "last_message")
 
-    def get_have_message(self, obj):
+    def get_have_message(self, obj) -> bool:
+        """
+        return true if user have new message from other user.
+        :param obj:
+        :return:
+        """
         usernames = obj.name.split("__")
         other_user = get_other_user(usernames, self.context['user'].username)
         return Message.objects.filter(
@@ -55,6 +60,9 @@ class ConversationSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_last_message(self, obj):
+        """
+        Send last message.
+        """
         messages = obj.messages.all().order_by("-timestamp")
         if not messages.exists():
             return None
@@ -62,6 +70,11 @@ class ConversationSerializer(serializers.ModelSerializer):
         return MessageSerializer(message).data
 
     def get_other_user(self, obj):
+        """
+        Return other user from list users name
+        :param obj:
+        :return:
+        """
         usernames = obj.name.split("__")
         other_user = get_other_user(usernames, self.context['user'].username)
         return UserSerializer(other_user).data

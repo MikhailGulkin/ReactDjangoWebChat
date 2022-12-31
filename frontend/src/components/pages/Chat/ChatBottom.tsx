@@ -1,6 +1,8 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
+
 import { _handleSubmit } from "@/utils/Chat/sendMessage";
 import { _onType, _timeoutFunction } from "@/utils/Chat/typing";
+
 import { ChatBottomType } from "@/@types/chat";
 
 export const ChatBottom: React.FC<ChatBottomType> = ({

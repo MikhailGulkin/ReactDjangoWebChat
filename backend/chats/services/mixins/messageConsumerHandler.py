@@ -6,6 +6,9 @@ from chats.utils.countUniqueMessage import count_unique_conversation_message
 
 
 class MessageConsumerMixin:
+    """
+    Class that implements the logic when a new message is received.
+    """
     def _chat_message(self, content):
         message = Message.objects.create(
             from_user=self.user,
@@ -60,6 +63,10 @@ class MessageConsumerMixin:
 
 
 class MessageConsumerStartMixin(MessageConsumerMixin):
+    """
+    A class that provides a method that runs the logic from the
+    MessageConsumerStartMixin depending on the message it receives.
+    """
     def _start_handle_message(self, message_type, content):
         if message_type == "chat_message":
             self._chat_message(content)

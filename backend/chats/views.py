@@ -11,6 +11,9 @@ class ConversationListAPIView(
     ConversationContextMixin,
     generics.ListAPIView
 ):
+    """
+    Display a list :model:`chats.Conversation` filtering by username.
+    """
     serializer_class = ConversationSerializer
     queryset = Conversation.objects.none()
 
@@ -25,12 +28,19 @@ class ConversationRetrieveAPIView(
     ConversationContextMixin,
     generics.RetrieveAPIView
 ):
+    """
+    Display single :model:`chats.Conversation`.
+    """
     serializer_class = ConversationSerializer
     queryset = Conversation.objects.all()
     lookup_field = 'name'
 
 
 class MessageListAPIView(generics.ListAPIView):
+    """
+       Display a list :model:`chats.Message` filtering by conversation and
+       time create.
+       """
     serializer_class = MessageSerializer
     queryset = Message.objects.none()
     pagination_class = MessagePagination

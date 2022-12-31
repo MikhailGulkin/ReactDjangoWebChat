@@ -2,6 +2,11 @@ from asgiref.sync import async_to_sync
 
 
 class UserConsumerDisconnectMixin:
+    """
+    Class that implements the logic when user disconnect to
+    chats.ChatConsumer.
+    """
+
     def _disconnect(self):
         if self.user.is_authenticated:  # send the leave event to the room
             async_to_sync(self.channel_layer.group_send)(
@@ -16,6 +21,11 @@ class UserConsumerDisconnectMixin:
 
 
 class UserNotificationDisconnectMixin:
+    """
+    Class that implements the logic when user disconnect to
+    chats.NotificationConsumer.
+    """
+
     def _disconnect(self):
         if self.channel_layer.group_discard:
             async_to_sync(self.channel_layer.group_discard)(

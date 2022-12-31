@@ -1,6 +1,6 @@
+import React from "react";
 import { ConversationType } from "@/@types/converstation";
 import { UserType } from "@/@types/user";
-import React from "react";
 
 export const _fetchConversation =
   (

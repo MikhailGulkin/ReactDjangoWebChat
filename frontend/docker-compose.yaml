@@ -1,0 +1,12 @@
+services:
+  web:
+    container_name: webFrontChat
+    restart: always
+    ports:
+      - 2999:3000
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: npm start
+    env_file:
+      - /.env
