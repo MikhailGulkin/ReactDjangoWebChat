@@ -2,7 +2,6 @@ socketEnv
 chatEnv
 .idea
 __pycache__
-migrations
 .env
 
 
